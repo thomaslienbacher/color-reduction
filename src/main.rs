@@ -18,12 +18,10 @@ fn N(id: usize) -> Node {
     }
 }
 
-fn main() {
-    const NUM_NODES: usize = 300;
-    let mut nodes = Vec::with_capacity(NUM_NODES);
+fn complete_graph(num_nodes: usize) -> (VecGraph, Vec<Node>, usize) {
+    let mut nodes = Vec::with_capacity(num_nodes);
     let mut g = VecGraphBuilder::new();
-
-    let g_nodes = g.add_nodes(NUM_NODES);
+    let g_nodes = g.add_nodes(num_nodes);
 
     for n1 in &g_nodes {
         for n2 in &g_nodes {
@@ -34,14 +32,42 @@ fn main() {
         nodes.push(N(n1.index()));
     }
 
-    let graph: VecGraph<usize> = g.into_graph();
+    let delta = num_nodes - 1;
+    (g.into_graph(), nodes, delta)
+}
+
+fn chain(num_nodes: usize) -> (VecGraph, Vec<Node>, usize) {
+    let mut nodes = Vec::with_capacity(num_nodes);
+    let mut g = VecGraphBuilder::new();
+
+    let g_nodes = g.add_nodes(num_nodes);
+
+    for n in &g_nodes {
+        nodes.push(N(n.index()));
+    }
+
+    for i in 0..g_nodes.len() - 1 {
+        g.add_edge(g_nodes[i], g_nodes[i + 1]);
+        g.add_edge(g_nodes[i + 1], g_nodes[i]);
+    }
+
+    (g.into_graph(), nodes, 2)
+}
+
+fn main() {
+    let (graph, mut nodes, delta) = chain(16);
+
+    for e in graph.edges() {
+        let (u, v) = graph.enodes(e);
+        println!("({}, {})", u.index(), v.index());
+    }
 
     println!("Start algorithm: ");
     let mut r = 1;
 
     // first round calculate own color / 2 and send to all others
     for node in &mut nodes {
-        node.color = node.color.div_ceil(23);
+        node.color = node.color.div_ceil(2);
         println!("node {} has new color {}", node.id, node.color);
     }
 
@@ -54,7 +80,7 @@ fn main() {
     r += 1;
 
     // loop until all discrepancies are fixed
-    for _ in 0..NUM_NODES {
+    for _ in 0..delta {
         println!("\nstarting round {r}");
 
         // process messages and calculate new color if needed
@@ -112,10 +138,20 @@ fn main() {
             //println!("node {}: sending to node {}: ({}, {})", u.index(), v.index(), u.index(), c);
         }
 
+        println!("\nround colors:");
+        for node in &nodes {
+            println!("node {:3} has color {:3}", node.id, node.color);
+        }
+
         r += 1;
     }
 
     println!("\nfinal colors:");
+    for node in &nodes {
+        println!("node {:3} has color {:3}", node.id, node.color);
+    }
+
+    println!("\nfinal colors sorted:");
     nodes.sort_by(|n, b| n.color.cmp(&b.color));
     for node in &nodes {
         println!("node {:3} has color {:3}", node.id, node.color);
