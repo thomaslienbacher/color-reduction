@@ -1,6 +1,6 @@
 [package]
 name = "color-reduction"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 authors = ["Thomas Lienbacher <lienbacher.tom@gmail.com>"]
 
@@ -9,3 +9,4 @@ authors = ["Thomas Lienbacher <lienbacher.tom@gmail.com>"]
 [dependencies]
 rs-graph = "0.21"
 rand = "0.8.5"
+clap = { version = "4.4.7", features = ["color", "suggestions", "derive", "cargo"] }
