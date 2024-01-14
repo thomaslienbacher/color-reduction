@@ -10,7 +10,7 @@ This project was created with [Rust](https://www.rust-lang.org/) version 1.75.0.
 1. Install Rust using [rustup](https://www.rust-lang.org/tools/install) (recommended)
 2. Clone this repository `git clone https://github.com/thomaslienbacher/color-reduction.git`
 3. Use `cargo build --release` in the repository folder, this will build and place the binary
-   into `<repo>/target/release`
+   into `./target/release`
 4. Alternatively use `cargo run --release` to build and run the project
 
 Use `color-reduction --help` to get information on usage.
@@ -62,12 +62,24 @@ This takes around 10ms on my system.
 color-reduction -m chain -n 4000
 ```
 
-This takes around 10ms on my system.
+### Run on a complete graph with 6000 nodes
+
+```shell
+color-reduction -m complete-graph -n 6000
+```
+
+This takes around 15s on my machine and consumes around 10.5 GB of memory at its peak.
+
+#### Run on a complete graph with 6 nodes in verbose mode and write generated graph into graph.dot
+
+```shell
+color-reduction -v -m complete-graph -n 6 -d graph.dot
+```
 
 ## Visualizing graph
 
 Using the `-d` option one can specify a file
-that will be used to generate a graphviz dot file.
+that will be used to generate a graphviz [dot](https://man.archlinux.org/man/dot.1.htmls) file.
 This file can then be viewed using `xdot`
 or converted to a pdf file using
 `dot -Tpdf -o graph.pdf graph.dot`.

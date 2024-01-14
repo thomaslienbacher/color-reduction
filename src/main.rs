@@ -33,7 +33,7 @@ impl Coloring {
 struct Node {
     id: usize,
     coloring: Coloring,
-    inbox: Vec<(usize, Coloring)>,
+    inbox: Vec<Coloring>,
 }
 
 fn N(id: usize) -> Node {
@@ -181,7 +181,7 @@ fn distributed_randomized_coloring_algorithm(graph: &VecGraph, nodes: &mut Vec<N
         for e in graph.edges() {
             let (u, v) = graph.enodes(e);
             let c = nodes[u.index()].coloring;
-            nodes[v.index()].inbox.push((u.index(), c));
+            nodes[v.index()].inbox.push(c);
 
             if verbose {
                 println!("node {:3}: sending to node {:3}:  {:?}", u.index(), v.index(), c);
@@ -202,7 +202,7 @@ fn distributed_randomized_coloring_algorithm(graph: &VecGraph, nodes: &mut Vec<N
             let mut available_colors = list_of_colors.clone();
             let mut candidate_colors = list_of_colors.clone();
 
-            for (_, coloring) in &node.inbox {
+            for coloring in &node.inbox {
                 if let Permanent(v) = coloring {
                     available_colors.remove(v);
                 }
